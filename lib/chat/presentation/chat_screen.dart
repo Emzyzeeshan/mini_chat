@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../features/home/bloc/home_bloc.dart';
 import '../../features/home/bloc/home_event.dart';
+import '../data/dictionary_api_service.dart';
 import '../models/message_model.dart';
 import '../data/chat_api_service.dart';
 
@@ -18,6 +19,41 @@ class _ChatScreenState extends State<ChatScreen> {
   final _controller = TextEditingController();
   final _api = ChatApiService();
   final List<MessageModel> _messages = [];
+  final _dictionaryApi = DictionaryApiService();
+
+  void _showMeaningBottomSheet(BuildContext context, String word) async {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) {
+        return FutureBuilder<String>(
+          future: _dictionaryApi.getMeaning(word),
+          builder: (_, snapshot) {
+            return Padding(
+              padding: const EdgeInsets.all(16),
+              child: snapshot.connectionState == ConnectionState.waiting
+                  ? const Center(child: CircularProgressIndicator())
+                  : Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    word.toUpperCase(),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(snapshot.data ?? "No meaning found"),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 
   void send() async {
     if (_controller.text.isEmpty) return;
@@ -57,12 +93,22 @@ class _ChatScreenState extends State<ChatScreen> {
                       color: m.isSender ? Colors.blue : Colors.grey.shade300,
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: Text(
-                      m.text,
-                      style: TextStyle(
-                        color: m.isSender ? Colors.white : Colors.black,
+                    child: GestureDetector(
+                      onLongPressStart: (details) {
+                        final text = m.text;
+                        final words = text.split(' ');
+                        if (words.isNotEmpty) {
+                          _showMeaningBottomSheet(context, words.first);
+                        }
+                      },
+                      child: Text(
+                        m.text,
+                        style: TextStyle(
+                          color: m.isSender ? Colors.white : Colors.black,
+                        ),
                       ),
                     ),
+
                   ),
                 );
               },
