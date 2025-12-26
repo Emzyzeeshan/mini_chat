@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../chat/presentation/chat_screen.dart';
 import '../bloc/home_bloc.dart';
 import '../bloc/home_state.dart';
-import '../../chat/presentation/chat_screen.dart';
 
 class UsersTab extends StatelessWidget {
   const UsersTab({super.key});

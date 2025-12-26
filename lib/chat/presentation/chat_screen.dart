@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../features/home/bloc/home_bloc.dart';
+import '../../features/home/bloc/home_event.dart';
 import '../models/message_model.dart';
 import '../data/chat_api_service.dart';
-import '../../home/bloc/home_bloc.dart';
-import '../../home/bloc/home_event.dart';
+
 
 class ChatScreen extends StatefulWidget {
   final int userIndex;
