@@ -20,22 +20,8 @@ class HomeScreen extends StatelessWidget {
                 floating: true,
                 snap: true,
                 centerTitle: true,
-                title: ToggleButtons(
-                  isSelected: [
-                    state.selectedTab == 0,
-                    state.selectedTab == 1
-                  ],
-                  onPressed: (i) =>
-                      context.read<HomeBloc>().add(SwitchTab(i)),
-                  children: const [
-                    Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                        child: Text("Users")),
-                    Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                        child: Text("Chat History")),
-                  ],
-                ),
+                title: _topSwitcher(context, state.selectedTab),
+
               ),
               SliverFillRemaining(
                 child: IndexedStack(
@@ -50,17 +36,83 @@ class HomeScreen extends StatelessWidget {
           ),
           floatingActionButton: state.selectedTab == 0
               ? FloatingActionButton(
+            backgroundColor: Colors.blue,
+            child: const Icon(Icons.add, size: 28),
             onPressed: () {
-              context.read<HomeBloc>().add(AddUser("User ${state.users.length + 1}"));
+              context.read<HomeBloc>()
+                  .add(AddUser("User ${state.users.length + 1}"));
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("User added")),
+                const SnackBar(
+                  content: Text("User added"),
+                  behavior: SnackBarBehavior.floating,
+                ),
               );
             },
-            child: const Icon(Icons.add),
           )
-              : null,
+          : null,
+          bottomNavigationBar: BottomNavigationBar(
+            currentIndex: 0,
+            selectedItemColor: Colors.blue,
+            unselectedItemColor: Colors.grey,
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.chat_bubble_outline),
+                label: "Home",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.local_offer_outlined),
+                label: "Offers",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.settings_outlined),
+                label: "Settings",
+              ),
+            ],
+          ),
+
         );
       },
     );
   }
+}
+
+
+Widget _topSwitcher(BuildContext context, int selected) {
+  return Container(
+    padding: const EdgeInsets.all(4),
+    decoration: BoxDecoration(
+      color: Colors.grey.shade200,
+      borderRadius: BorderRadius.circular(24),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _switchItem(context, "Users", 0, selected),
+        _switchItem(context, "Chat History", 1, selected),
+      ],
+    ),
+  );
+}
+
+Widget _switchItem(
+    BuildContext context, String title, int index, int selected) {
+  final isActive = index == selected;
+  return GestureDetector(
+    onTap: () =>
+        context.read<HomeBloc>().add(SwitchTab(index)),
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: isActive ? Colors.white : Colors.transparent,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          color: isActive ? Colors.blue : Colors.grey,
+        ),
+      ),
+    ),
+  );
 }

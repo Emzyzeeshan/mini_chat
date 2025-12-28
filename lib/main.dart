@@ -17,7 +17,20 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Mini Chat App',
-        theme: ThemeData(primarySwatch: Colors.blue),
+        theme: ThemeData(
+          scaffoldBackgroundColor: const Color(0xFFF7F7FB),
+          primaryColor: Colors.blue,
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            titleTextStyle: TextStyle(
+              color: Colors.black,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
+            iconTheme: IconThemeData(color: Colors.black),
+          ),
+        ),
         home: const HomeScreen(),
       ),
     );

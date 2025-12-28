@@ -3,11 +3,21 @@ import 'package:http/http.dart' as http;
 
 class ChatApiService {
   Future<String> fetchMessage() async {
-    final res =
-    await http.get(Uri.parse('https://api.quotable.io/random'));
-    if (res.statusCode == 200) {
-      return jsonDecode(res.body)['content'];
+    try {
+      final res = await http.get(
+        Uri.parse(
+          'https://jsonplaceholder.typicode.com/comments/1',
+        ),
+      );
+
+      if (res.statusCode == 200) {
+        final data = jsonDecode(res.body);
+        return data['body'] ?? "Hello 👋";
+      }
+      return "No reply received.";
+    } catch (_) {
+      // 🔥 graceful fallback (NO CRASH)
+      return "I'm offline right now 😊";
     }
-    return "Hello 👋";
   }
 }
